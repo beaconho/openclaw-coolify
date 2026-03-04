@@ -86,8 +86,7 @@ RUN --mount=type=cache,target=/data/.npm \
     fi 
 
 # Install uv explicitly
-RUN curl -L https://github.com/azlux/uv/releases/latest/download/uv-linux-x64 -o /usr/local/bin/uv && \
-    chmod +x /usr/local/bin/uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sh
 
 # Kimi only
 RUN curl -L https://code.kimi.com/install.sh | bash && \
