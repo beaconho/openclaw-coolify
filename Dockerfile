@@ -3,7 +3,7 @@
 ########################################
 # Stage 1: Base System
 ########################################
-FROM node:20-bookworm-slim AS base
+FROM node:22-bookworm-slim AS base
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_ROOT_USER_ACTION=ignore
@@ -81,11 +81,11 @@ RUN bun install --no-cache -g vercel @marp-team/marp-cli https://github.com/tobi
 # Ensure global npm bin is in PATH
 ENV PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:${PATH}"
 
-# OpenClaw (npm install)
+# OpenClaw (bun install)
 RUN if [ "$OPENCLAW_BETA" = "true" ]; then \
-    npm install -g openclaw@beta --force; \
+    bun install -g openclaw@beta; \
     else \
-    npm install -g openclaw --force; \
+    bun install -g openclaw; \
     fi
 
 # Install uv explicitly
