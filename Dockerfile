@@ -73,11 +73,10 @@ ENV OPENCLAW_BETA=${OPENCLAW_BETA} \
     OPENCLAW_NO_ONBOARD=1 \
     NPM_CONFIG_UNSAFE_PERM=true
 
-# Bun global installs (with cache)
-RUN --mount=type=cache,target=/data/.bun/install/cache \
-    bun install -g vercel @marp-team/marp-cli https://github.com/tobi/qmd && \
+# Bun global installs (bypass cache)
+RUN bun install --no-cache -g vercel @marp-team/marp-cli https://github.com/tobi/qmd && \
     bun pm -g untrusted && \
-    bun install -g @openai/codex @google/gemini-cli opencode-ai @steipete/summarize @hyperbrowser/agent clawhub
+    bun install --no-cache -g @openai/codex @google/gemini-cli opencode-ai @steipete/summarize @hyperbrowser/agent clawhub
 
 # Ensure global npm bin is in PATH
 ENV PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:${PATH}"
