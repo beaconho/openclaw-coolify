@@ -32,8 +32,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     sqlite3 \
     pass \
     chromium \
-    docker.io \
     && rm -rf /var/lib/apt/lists/*
+
+# Install modern Docker client to match host API
+RUN curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-27.3.1.tgz | tar -xzC /tmp && \
+    mv /tmp/docker/docker /usr/local/bin/ && \
+    rm -rf /tmp/docker
 
 # 🔥 CRITICAL FIX (native modules)
 ENV PYTHON=/usr/bin/python3 \
