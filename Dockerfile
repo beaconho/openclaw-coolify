@@ -81,11 +81,12 @@ RUN bun install --no-cache -g vercel @marp-team/marp-cli https://github.com/tobi
 # Ensure global npm bin is in PATH
 ENV PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:${PATH}"
 
-# OpenClaw (bun install)
-RUN if [ "$OPENCLAW_BETA" = "true" ]; then \
-    bun install -g openclaw@beta; \
+# OpenClaw (Local install to fix UI symlink bug #6679)
+RUN mkdir -p /opt/openclaw-app && cd /opt/openclaw-app && \
+    if [ "$OPENCLAW_BETA" = "true" ]; then \
+    bun add openclaw@beta; \
     else \
-    bun install -g openclaw; \
+    bun add openclaw; \
     fi
 
 # Install uv explicitly
@@ -110,6 +111,6 @@ COPY . .
 RUN ln -sf /data/.kimi/bin/kimi /usr/local/bin/kimi || true && \
     chmod +x /app/scripts/*.sh
 
-ENV PATH="/root/.local/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/data/.bun/bin:/data/.bun/install/global/bin:/data/.claude/bin:/data/.kimi/bin:/usr/local/lib/node_modules/.bin"
+ENV PATH="/opt/openclaw-app/node_modules/.bin:/root/.local/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/data/.bun/bin:/data/.bun/install/global/bin:/data/.claude/bin:/data/.kimi/bin:/usr/local/lib/node_modules/.bin"
 EXPOSE 18789
 CMD ["bash", "/app/scripts/bootstrap.sh"]
