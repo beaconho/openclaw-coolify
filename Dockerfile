@@ -83,12 +83,11 @@ RUN --mount=type=cache,target=/data/.bun/install/cache \
 ENV PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:${PATH}"
 
 # OpenClaw (npm install)
-RUN --mount=type=cache,target=/data/.npm \
-    if [ "$OPENCLAW_BETA" = "true" ]; then \
-    npm install -g openclaw@beta; \
+RUN if [ "$OPENCLAW_BETA" = "true" ]; then \
+    npm install -g openclaw@beta --force; \
     else \
-    npm install -g openclaw; \
-    fi 
+    npm install -g openclaw --force; \
+    fi
 
 # Install uv explicitly
 RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR="/usr/local/bin" sh
