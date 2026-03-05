@@ -111,6 +111,9 @@ COPY . .
 RUN ln -sf /data/.kimi/bin/kimi /usr/local/bin/kimi || true && \
     chmod +x /app/scripts/*.sh
 
+# Force the system to boot from the exact folder where the UI files live
+WORKDIR /opt/openclaw-app/node_modules/openclaw
+
 ENV PATH="/opt/openclaw-app/node_modules/.bin:/root/.local/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/data/.bun/bin:/data/.bun/install/global/bin:/data/.claude/bin:/data/.kimi/bin:/usr/local/lib/node_modules/.bin"
 EXPOSE 18789
 CMD ["bash", "/app/scripts/bootstrap.sh"]
