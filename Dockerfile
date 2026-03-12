@@ -77,7 +77,7 @@ ENV OPENCLAW_BETA=${OPENCLAW_BETA} \
 RUN npm config set fetch-retries 5 && \
     npm config set fetch-retry-mintimeout 20000 && \
     npm config set fetch-retry-maxtimeout 120000 && \
-    npm config set network-timeout 600000 && \
+    npm config set timeout 600000 && \          ←←← CHANGE ONLY THIS LINE
     npm config set maxsockets 15 && \
     npm cache clean --force
 
