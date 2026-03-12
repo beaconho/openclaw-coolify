@@ -75,11 +75,11 @@ ENV OPENCLAW_BETA=${OPENCLAW_BETA} \
 
 # 1. Clean the cache to wipe out the failed attempts
 RUN npm cache clean --force && \
-# 2. Install vercel separately with foreground-scripts to prevent the ETXTBSY race condition
-    npm install -g vercel --foreground-scripts && \
+# 2. Isolate Vercel and handle the Docker ETXTBSY race condition with a sync & retry fallback
+    (npm install -g vercel || (sync && sleep 2 && npm install -g vercel)) && \
 # 3. Install the rest of the standard packages
-    npm install -g @marp-team/marp-cli @openai/codex @google/gemini-cli opencode-ai @steipete/summarize @hyperbrowser/agent clawhub --foreground-scripts && \
-# 4. Clone the GitHub package using git to bypass npm's extraction bug, install locally, then clean up
+    npm install -g @marp-team/marp-cli @openai/codex @google/gemini-cli opencode-ai @steipete/summarize @hyperbrowser/agent clawhub && \
+# 4. Clone the GitHub package using git to bypass npm's extraction bug
     git clone https://github.com/tobi/qmd /tmp/qmd && \
     cd /tmp/qmd && \
     npm install -g . && \
