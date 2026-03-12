@@ -75,10 +75,13 @@ ENV OPENCLAW_BETA=${OPENCLAW_BETA} \
 
 # 1. Clean the cache to wipe out the corrupted files from the last attempt
 RUN npm cache clean --force && \
-# 2. Install all the standard official NPM packages first
+# 2. Install all the standard official NPM packages
     npm install -g vercel @marp-team/marp-cli @openai/codex @google/gemini-cli opencode-ai @steipete/summarize @hyperbrowser/agent clawhub --verbose && \
-# 3. Install the custom GitHub package separately to prevent race conditions
-    npm install -g https://github.com/tobi/qmd --verbose
+# 3. Clone the GitHub package using git to bypass npm's extraction bug, install locally, then clean up
+    git clone https://github.com/tobi/qmd /tmp/qmd && \
+    cd /tmp/qmd && \
+    npm install -g . --verbose && \
+    rm -rf /tmp/qmd
 
 # Ensure global npm bin is in PATH
 ENV PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:${PATH}"
