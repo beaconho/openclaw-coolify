@@ -73,14 +73,25 @@ ENV OPENCLAW_BETA=${OPENCLAW_BETA} \
     OPENCLAW_NO_ONBOARD=1 \
     NPM_CONFIG_UNSAFE_PERM=true
 
-# 1. Clean the cache to wipe out the failed attempts
-RUN npm cache clean --force && \
-# 2. Isolate Vercel and handle the Docker ETXTBSY race condition with a sync & retry fallback
-    (npm install -g vercel || (sync && sleep 2 && npm install -g vercel)) && \
-# 3. Install the rest of the standard packages
-    npm install -g @marp-team/marp-cli @openai/codex @google/gemini-cli opencode-ai @steipete/summarize @hyperbrowser/agent clawhub && \
-# 4. Clone the GitHub package using git to bypass npm's extraction bug
-    git clone https://github.com/tobi/qmd /tmp/qmd && \
+# 1. Configure NPM to be highly resilient to network drops
+RUN npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm config set network-timeout 600000 && \
+    npm config set maxsockets 15 && \
+    npm cache clean --force
+
+# 2. Isolate Vercel and handle the Docker ETXTBSY race condition
+RUN (npm install -g vercel || (sync && sleep 2 && npm install -g vercel))
+
+# 3. Split the heavy packages into separate RUN layers.
+# If a network drop happens here, Docker caches the successful layers!
+RUN npm install -g @marp-team/marp-cli @openai/codex
+RUN npm install -g @google/gemini-cli opencode-ai
+RUN npm install -g @steipete/summarize @hyperbrowser/agent clawhub
+
+# 4. Clone the GitHub package using git
+RUN git clone https://github.com/tobi/qmd /tmp/qmd && \
     cd /tmp/qmd && \
     npm install -g . && \
     rm -rf /tmp/qmd
