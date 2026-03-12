@@ -73,14 +73,16 @@ ENV OPENCLAW_BETA=${OPENCLAW_BETA} \
     OPENCLAW_NO_ONBOARD=1 \
     NPM_CONFIG_UNSAFE_PERM=true
 
-# 1. Clean the cache to wipe out the corrupted files from the last attempt
+# 1. Clean the cache to wipe out the failed attempts
 RUN npm cache clean --force && \
-# 2. Install all the standard official NPM packages
-    npm install -g vercel @marp-team/marp-cli @openai/codex @google/gemini-cli opencode-ai @steipete/summarize @hyperbrowser/agent clawhub --verbose && \
-# 3. Clone the GitHub package using git to bypass npm's extraction bug, install locally, then clean up
+# 2. Install vercel separately with foreground-scripts to prevent the ETXTBSY race condition
+    npm install -g vercel --foreground-scripts && \
+# 3. Install the rest of the standard packages
+    npm install -g @marp-team/marp-cli @openai/codex @google/gemini-cli opencode-ai @steipete/summarize @hyperbrowser/agent clawhub --foreground-scripts && \
+# 4. Clone the GitHub package using git to bypass npm's extraction bug, install locally, then clean up
     git clone https://github.com/tobi/qmd /tmp/qmd && \
     cd /tmp/qmd && \
-    npm install -g . --verbose && \
+    npm install -g . && \
     rm -rf /tmp/qmd
 
 # Ensure global npm bin is in PATH
