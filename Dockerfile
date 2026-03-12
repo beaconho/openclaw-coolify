@@ -73,9 +73,12 @@ ENV OPENCLAW_BETA=${OPENCLAW_BETA} \
     OPENCLAW_NO_ONBOARD=1 \
     NPM_CONFIG_UNSAFE_PERM=true
 
-# Use NPM for global packages to prevent silent SSH timeouts and compile native C++ modules correctly
-RUN npm install -g vercel @marp-team/marp-cli https://github.com/tobi/qmd \
-    @openai/codex @google/gemini-cli opencode-ai @steipete/summarize @hyperbrowser/agent clawhub --verbose
+# 1. Clean the cache to wipe out the corrupted files from the last attempt
+RUN npm cache clean --force && \
+# 2. Install all the standard official NPM packages first
+    npm install -g vercel @marp-team/marp-cli @openai/codex @google/gemini-cli opencode-ai @steipete/summarize @hyperbrowser/agent clawhub --verbose && \
+# 3. Install the custom GitHub package separately to prevent race conditions
+    npm install -g https://github.com/tobi/qmd --verbose
 
 # Ensure global npm bin is in PATH
 ENV PATH="/usr/local/bin:/usr/local/lib/node_modules/.bin:${PATH}"
