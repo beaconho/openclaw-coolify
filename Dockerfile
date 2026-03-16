@@ -83,8 +83,12 @@ RUN npm config set fetch-retries 5 && \
     npm config set maxsockets 15 && \
     npm cache clean --force
 
-# 2. Install Vercel globally (robust version)
-RUN npm install -g vercel@latest --force
+# 2. Install Vercel globally (bulletproof network version)
+RUN npm config set fetch-retries 5 && \
+    npm config set network-timeout 600000 && \
+    npm config set maxsockets 10 && \
+    (npm install -g vercel@latest --force || \
+    (echo "First attempt failed, syncing and retrying..." && sync && sleep 5 && npm install -g vercel@latest --force))
 
 # 3. Split the heavy packages into separate RUN layers.
 # If a network drop happens here, Docker caches the successful layers!
