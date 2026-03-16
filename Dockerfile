@@ -57,9 +57,11 @@ ENV BUN_INSTALL="/data/.bun" \
 # Install Bun (allow bun to manage compatible node)
 RUN curl -fsSL https://bun.sh/install | bash
 
-# Python tools
-RUN pip3 install ipython csvkit openpyxl python-docx pypdf botasaurus browser-use playwright --break-system-packages && \
-    playwright install-deps
+# Cache the heavy pip packages first
+RUN pip3 install ipython csvkit openpyxl python-docx pypdf botasaurus browser-use playwright --break-system-packages
+
+# Then run the OS-level dependency installation in a separate layer
+RUN playwright install-deps
 
 ENV XDG_CACHE_HOME="/data/.cache"
 
