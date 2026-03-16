@@ -85,7 +85,6 @@ RUN npm config set fetch-retries 5 && \
 
 # 2. Install Vercel globally (bulletproof network version)
 RUN npm config set fetch-retries 5 && \
-    npm config set network-timeout 600000 && \
     npm config set maxsockets 10 && \
     (npm install -g vercel@latest --force || \
     (echo "First attempt failed, syncing and retrying..." && sync && sleep 5 && npm install -g vercel@latest --force))
