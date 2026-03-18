@@ -133,6 +133,25 @@ COPY . .
 RUN ln -sf /data/.kimi/bin/kimi /usr/local/bin/kimi || true && \
     chmod +x /app/scripts/*.sh
 
+# Combine all PATHs for the final runtime
 ENV PATH="/root/.local/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/data/.bun/bin:/data/.bun/install/global/bin:/data/.claude/bin:/data/.kimi/bin"
+
+# 🔥 CRITICAL FIX: ARGs moved to the VERY BOTTOM to protect the massive build cache!
+ARG DOCKER_HOST=unix:///var/run/docker.sock
+ARG HOST=0.0.0.0
+ARG OPENCLAW_GATEWAY_MODE=local
+ARG OPENCLAW_GATEWAY_BIND=lan
+ARG OPENCLAW_ALLOW_UNCONFIGURED=true
+ARG OPENCLAW_AUTH_TOKEN
+ARG BAILIAN_CODER_KEY
+ARG BAILIAN_GENERAL_KEY
+ARG DISCORD_TOKEN
+ARG NEXTCLOUD_PASS
+ARG COOLIFY_URL
+ARG COOLIFY_FQDN
+ARG COOLIFY_BRANCH
+ARG COOLIFY_RESOURCE_UUID
+
+# Expose the port and start the app
 EXPOSE 18789
 CMD ["bash", "/app/scripts/bootstrap.sh"]
