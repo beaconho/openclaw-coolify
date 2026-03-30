@@ -26,12 +26,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ripgrep fd-find fzf bat \
     pandoc \
     poppler-utils \
-    ffmpeg \
-    imagemagick \
     graphviz \
     sqlite3 \
     pass \
-    chromium \
     && rm -rf /var/lib/apt/lists/*
 
 # Install modern Docker client to match host API
